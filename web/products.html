@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bars Register - Produtos</title>
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <header role="banner">
+    <div class="navbar" aria-label="Barra de navegação">
+      <div class="brand">Bars Register</div>
+      <nav aria-label="Principal">
+        <ul>
+          <li><a href="index.html">Início</a></li>
+          <li><a href="products.html">Produtos</a></li>
+          <li><a href="pos.html">Vendas</a></li>
+          <li><a href="dashboard.html">Dashboard</a></li>
+          <li><a href="login.html">Entrar</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo" tabindex="-1">
+    <h1>Gerenciamento de Produtos</h1>
+
+    <section class="card" aria-labelledby="titulo-busca">
+      <h2 id="titulo-busca" class="section-title">Buscar e Adicionar</h2>
+      <div class="grid-2">
+        <div>
+          <label for="busca">Buscar produto</label>
+          <input id="busca" class="input" type="search" placeholder="Nome ou preço..." aria-label="Buscar produtos" />
+          <p class="form-help">Filtra a tabela por nome ou preço.</p>
+        </div>
+        <form id="formAdd" class="card" aria-labelledby="titulo-add" novalidate>
+          <h3 id="titulo-add" class="section-title">Adicionar novo produto</h3>
+          <div class="form-field">
+            <label for="nome">Nome</label>
+            <input id="nome" name="nome" class="input" required />
+          </div>
+          <div class="form-field">
+            <label for="preco">Preço (R$)</label>
+            <input id="preco" name="preco" class="input" type="number" step="0.01" required />
+          </div>
+          <div class="form-field">
+            <label for="estoque">Estoque</label>
+            <input id="estoque" name="estoque" class="input" type="number" min="0" required />
+          </div>
+          <button class="btn btn-success" type="submit">Adicionar</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="titulo-tabela" style="margin-top: 16px">
+      <h2 id="titulo-tabela" class="section-title">Lista de Produtos</h2>
+      <table class="table" aria-describedby="help-tabela">
+        <caption id="help-tabela" class="visually-hidden">Tabela com ações de editar e excluir produtos</caption>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Preço</th>
+            <th>Estoque</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="produtosBody"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <p>© 2025 Bars Register. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/products.js"></script>
+</body>
+</html>

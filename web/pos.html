@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bars Register - Ponto de Venda</title>
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <header role="banner">
+    <div class="navbar" aria-label="Barra de navegação">
+      <div class="brand">Bars Register</div>
+      <nav aria-label="Principal">
+        <ul>
+          <li><a href="index.html">Início</a></li>
+          <li><a href="products.html">Produtos</a></li>
+          <li><a href="pos.html">Vendas</a></li>
+          <li><a href="dashboard.html">Dashboard</a></li>
+          <li><a href="login.html">Entrar</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo" tabindex="-1">
+    <h1>Ponto de Venda</h1>
+    <div class="grid-2">
+      <section class="card" aria-labelledby="titulo-add-item">
+        <h2 id="titulo-add-item" class="section-title">Adicionar Item</h2>
+        <div class="form-field">
+          <label for="nomeItem">Produto</label>
+          <input id="nomeItem" class="input" placeholder="Nome do produto" />
+        </div>
+        <div class="form-field">
+          <label for="precoItem">Preço (R$)</label>
+          <input id="precoItem" type="number" step="0.01" class="input" placeholder="0.00" />
+        </div>
+        <div class="form-field">
+          <label for="qtdItem">Quantidade</label>
+          <input id="qtdItem" type="number" min="1" class="input" value="1" />
+        </div>
+        <button id="btnAdd" class="btn btn-primary">Adicionar</button>
+      </section>
+
+      <section class="card" aria-labelledby="titulo-acoes">
+        <h2 id="titulo-acoes" class="section-title">Ações</h2>
+        <button id="btnFinalizar" class="btn btn-success">Finalizar Venda</button>
+        <button id="btnCancelar" class="btn btn-danger">Cancelar Venda</button>
+        <p id="acaoFeedback" class="form-help" aria-live="polite" style="margin-top: 12px"></p>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top: 16px" aria-labelledby="titulo-itens">
+      <h2 id="titulo-itens" class="section-title">Itens da Venda</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>Preço</th>
+            <th>Qtd</th>
+            <th>Subtotal</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="carrinhoBody"></tbody>
+      </table>
+    </section>
+
+    <section class="card" style="margin-top: 16px" aria-labelledby="titulo-total">
+      <h2 id="titulo-total" class="section-title">Total</h2>
+      <p id="total" aria-live="polite"><strong>R$ 0,00</strong></p>
+    </section>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <p>© 2025 Bars Register. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/pos.js"></script>
+</body>
+</html>
