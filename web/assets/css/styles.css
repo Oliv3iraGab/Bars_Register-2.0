@@ -55,7 +55,7 @@ main { max-width: 1200px; margin: 24px auto; padding: 0 20px; }
 .footer { background: var(--accent); color: #fff; }
 .footer .container { max-width: 1200px; margin: 0 auto; padding: 12px 20px; text-align: center; }
 
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; height: 100%; min-height: 140px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
 .section-title { margin: 0 0 12px; font-size: 1.25rem; }
 
 .grid-2 { display: grid; grid-template-columns: 1fr; gap: 16px; }
@@ -87,7 +87,7 @@ label { display: block; margin-bottom: 6px; font-weight: 600; }
 .table-actions { display: flex; gap: 8px; }
 
 /* Cards e elementos específicos */
-.chart { height: 220px; background: #f0f0f0; border: 1px solid var(--border); border-radius: 8px; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); align-items: end; gap: 8px; padding: 8px; }
+.chart { height: 220px; background: #f0f0f0; border: 1px solid var(--border); border-radius: 8px; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; align-items: end; gap: 8px; padding: 8px; }
 .bar { background: var(--primary); border-radius: 4px 4px 0 0; }
 
 /* Utilitários */
