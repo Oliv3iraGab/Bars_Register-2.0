@@ -55,14 +55,17 @@ main { max-width: 1200px; margin: 24px auto; padding: 0 20px; }
 .footer { background: var(--accent); color: #fff; }
 .footer .container { max-width: 1200px; margin: 0 auto; padding: 12px 20px; text-align: center; }
 
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; height: 100%; min-height: 140px; }
 .section-title { margin: 0 0 12px; font-size: 1.25rem; }
 
-.grid-2 { display: grid; grid-template-columns: 1fr; gap: 16px; }
-.grid-3 { display: grid; grid-template-columns: 1fr; gap: 16px; }
-.grid-1 { display: grid; grid-template-columns: 1fr; gap: 16px; }
-@media (min-width: 900px) {
+.grid-2, .grid-3, .grid-1 { display: grid; grid-template-columns: 1fr; gap: 16px; align-items: stretch; }
+@media (min-width: 600px) {
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 768px) {
   .grid-2 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1200px) {
   .grid-3 { grid-template-columns: repeat(3, 1fr); }
 }
 
@@ -87,9 +90,35 @@ label { display: block; margin-bottom: 6px; font-weight: 600; }
 .table-actions { display: flex; gap: 8px; }
 
 /* Cards e elementos específicos */
-.chart { height: 220px; background: #f0f0f0; border: 1px solid var(--border); border-radius: 8px; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; align-items: end; gap: 8px; padding: 8px; }
+.chart { height: 220px; background: #f0f0f0; border: 1px solid var(--border); border-radius: 8px; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); align-items: end; gap: 8px; padding: 8px; }
 .bar { background: var(--primary); border-radius: 4px 4px 0 0; }
 
 /* Utilitários */
 .container-narrow { max-width: 640px; margin: 24px auto; padding: 0 20px; }
 .center { text-align: center; }
+
+/* Tooltip para valores de vendas */
+.tooltip {
+  position: fixed;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  line-height: 1.2;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+.tooltip.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.tooltip[aria-hidden="true"] { opacity: 0; }
+
+/* Melhorar foco dos elementos do gráfico para acessibilidade */
+.bar { outline: none; }
+.bar:focus { box-shadow: 0 0 0 2px #3b82f6; }

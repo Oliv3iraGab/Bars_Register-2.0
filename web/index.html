@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Bars Register - Início</title>
-  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=20251024" />
 </head>
 <body>
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
@@ -28,32 +28,24 @@
     <div class="grid-2">
       <section class="card" aria-labelledby="titulo-vendas">
         <h2 id="titulo-vendas" class="section-title">Visão Geral de Vendas</h2>
-        <div class="chart" aria-hidden="true">
-          <div class="bar" style="height: 120px"></div>
-          <div class="bar" style="height: 160px"></div>
-          <div class="bar" style="height: 90px"></div>
-          <div class="bar" style="height: 200px"></div>
-          <div class="bar" style="height: 140px"></div>
+        <div id="homeChart" class="chart" aria-hidden="true">
+          <!-- Barras renderizadas dinamicamente mantendo dimensões e estilos -->
         </div>
         <p class="form-help">Gráfico ilustrativo baseado nos wireframes.</p>
       </section>
 
       <section class="card" aria-labelledby="titulo-destaques">
         <h2 id="titulo-destaques" class="section-title">Produtos em Destaque</h2>
-        <ul>
-          <li>Produto A</li>
-          <li>Produto B</li>
-          <li>Produto C</li>
+        <ul id="destaquesLista">
+          <!-- Itens renderizados com dados reais -->
         </ul>
       </section>
     </div>
 
     <section class="card" style="margin-top: 16px" aria-labelledby="titulo-atividade">
       <h2 id="titulo-atividade" class="section-title">Atividade Recente</h2>
-      <ul>
-        <li>Venda #1023 concluída</li>
-        <li>Produto B atualizado</li>
-        <li>Novo usuário registrado</li>
+      <ul id="atividadeLista">
+        <!-- Eventos recentes renderizados com dados reais -->
       </ul>
     </section>
   </main>
@@ -65,5 +57,6 @@
   </footer>
 
   <script src="assets/js/main.js"></script>
+  <script src="assets/js/home.js"></script>
 </body>
 </html>

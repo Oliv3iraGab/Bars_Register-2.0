@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Bars Register - Início</title>
-  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=20251024" />
 </head>
 <body>
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
@@ -23,7 +23,7 @@
     </div>
   </header>
 
-  <main id="conteudo" tabindex="-1" class="container-narrow">
+  <main id="conteudo" tabindex="-1">
     <h1>Bem-vindo ao Bars Register</h1>
     <p class="form-help">Gerencie seus produtos, vendas e acompanhe indicadores com praticidade.</p>
     <div class="grid-3" style="margin-top: 16px;">
@@ -43,6 +43,22 @@
         <p><a class="btn btn-primary" href="dashboard.html">Abrir</a></p>
       </section>
     </div>
+
+    <div class="grid-2" style="margin-top: 16px;">
+      <section class="card" aria-labelledby="titulo-visao">
+        <h2 id="titulo-visao" class="section-title">Visão Geral de Vendas</h2>
+        <div id="homeChart" class="chart" aria-hidden="true"></div>
+      </section>
+      <section class="card" aria-labelledby="titulo-destaques">
+        <h2 id="titulo-destaques" class="section-title">Destaques</h2>
+        <ul id="destaquesLista" aria-live="polite"></ul>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top: 16px" aria-labelledby="titulo-atividade">
+      <h2 id="titulo-atividade" class="section-title">Atividade Recente</h2>
+      <ul id="atividadeLista" aria-live="polite"></ul>
+    </section>
   </main>
 
   <footer class="footer" role="contentinfo">
@@ -52,5 +68,6 @@
   </footer>
 
   <script src="assets/js/main.js"></script>
+  <script src="assets/js/home.js"></script>
 </body>
 </html>
