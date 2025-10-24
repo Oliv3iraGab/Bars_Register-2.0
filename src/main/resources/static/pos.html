@@ -29,16 +29,22 @@
       <section class="card" aria-labelledby="titulo-add-item">
         <h2 id="titulo-add-item" class="section-title">Adicionar Item</h2>
         <div class="form-field">
-          <label for="nomeItem">Produto</label>
-          <input id="nomeItem" class="input" placeholder="Nome do produto" />
-        </div>
-        <div class="form-field">
-          <label for="precoItem">Preço (R$)</label>
-          <input id="precoItem" type="number" step="0.01" class="input" placeholder="0.00" />
+          <label for="produtoSearch">Pesquisar Produto</label>
+          <input id="produtoSearch" type="text" class="input" placeholder="Digite o nome do produto" autocomplete="off" />
+          <select id="produtoDropdown" class="input" size="6" style="display:none;"></select>
+          <input id="produtoId" type="hidden" />
         </div>
         <div class="form-field">
           <label for="qtdItem">Quantidade</label>
           <input id="qtdItem" type="number" min="1" class="input" value="1" />
+        </div>
+        <div class="form-field">
+          <label for="tipoPagamento">Tipo de Pagamento</label>
+          <select id="tipoPagamento" class="input">
+            <option value="DINHEIRO">Dinheiro</option>
+            <option value="CARTAO">Cartão</option>
+            <option value="PIX">PIX</option>
+          </select>
         </div>
         <button id="btnAdd" class="btn btn-primary">Adicionar</button>
       </section>
@@ -79,7 +85,32 @@
     </div>
   </footer>
 
-  <script src="assets/js/main.js"></script>
-  <script src="assets/js/pos.js"></script>
+  <script>
+// Substitui const/let e arrow functions por ES5 para compatibilidade
+(function () {
+  function getPath() {
+    return window.location.pathname || '';
+  }
+
+  function markActiveMenu() {
+    var path = getPath();
+    var items = document.querySelectorAll('.menu-item');
+    for (var i = 0; i < items.length; i++) {
+      var el = items[i];
+      var href = (el.getAttribute('href') || '').trim();
+      var isActive = href && path.indexOf(href) >= 0;
+      if (isActive) el.classList.add('active');
+      else el.classList.remove('active');
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', markActiveMenu);
+  } else {
+    markActiveMenu();
+  }
+})();
+  </script>
+  <script src="assets/js/pos.js?v=es5"></script>
 </body>
 </html>

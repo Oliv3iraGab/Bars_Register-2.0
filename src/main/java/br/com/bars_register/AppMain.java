@@ -15,6 +15,7 @@ import br.com.bars_register.domain.Usuario;
 import br.com.bars_register.infrastructure.memory.InMemoryProdutoRepository;
 import br.com.bars_register.infrastructure.memory.InMemoryUsuarioRepository;
 import br.com.bars_register.infrastructure.memory.InMemoryVendaRepository;
+import br.com.bars_register.infrastructure.memory.InMemoryAuditoriaRepository;
 
 public class AppMain {
     public static void main(String[] args) {
@@ -22,11 +23,12 @@ public class AppMain {
         var produtoRepo = new InMemoryProdutoRepository();
         var usuarioRepo = new InMemoryUsuarioRepository();
         var vendaRepo = new InMemoryVendaRepository();
+        var auditoriaRepo = new InMemoryAuditoriaRepository();
 
         // Serviços
         var produtoService = new ProdutoService(produtoRepo);
         var usuarioService = new UsuarioService(usuarioRepo);
-        var vendaService = new VendaService(vendaRepo, produtoRepo);
+        var vendaService = new VendaService(vendaRepo, produtoRepo, auditoriaRepo);
         var relatorioService = new RelatorioService(vendaRepo);
 
         // Teste 1: criar usuário e autenticar

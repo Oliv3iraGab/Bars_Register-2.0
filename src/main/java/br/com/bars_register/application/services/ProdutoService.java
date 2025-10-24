@@ -14,6 +14,9 @@ public class ProdutoService {
     }
 
     public Produto cadastrar(Produto produto) {
+        if (produto.getNome() == null || produto.getNome().trim().isEmpty()) {
+            throw new IllegalArgumentException("Nome do produto é obrigatório");
+        }
         if (produto.getPreco() < 0) {
             throw new IllegalArgumentException("Preço não pode ser negativo");
         }

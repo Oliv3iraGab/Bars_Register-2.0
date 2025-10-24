@@ -49,8 +49,13 @@ public class ProductController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> remover(@PathVariable int id) {
-        boolean removido = produtoService.remover(id);
-        return removido ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        try {
+            boolean removido = produtoService.remover(id);
+            return removido ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        } catch (org.springframework.dao.DataIntegrityViolationException | org.hibernate.exception.ConstraintViolationException e) {
+            // Produto possui vínculos em itens de venda: retornar conflito
+            return ResponseEntity.status(409).build();
+        }
     }
 
     @PatchMapping("/{id}/stock")

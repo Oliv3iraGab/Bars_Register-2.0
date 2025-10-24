@@ -67,6 +67,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>br.com.bars_register.BarsRegisterApplication</mainClass>
+                </configuration>
             </plugin>
             <!-- Cobertura de testes -->
             <plugin>

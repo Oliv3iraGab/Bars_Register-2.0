@@ -1,14 +1,14 @@
-const API_BASE = ''; // usa mesma origem do backend
+var API_BASE = '';
 
-const produtosTbody = document.getElementById('produtosBody');
-const form = document.getElementById('productForm');
-const nomeInput = document.getElementById('productName');
-const precoInput = document.getElementById('productPrice');
-const estoqueInput = document.getElementById('productStock');
-const feedback = document.getElementById('formFeedback');
-const buscaInput = document.getElementById('searchInput');
+var produtosTbody = document.getElementById('produtosBody');
+var form = document.getElementById('productForm');
+var nomeInput = document.getElementById('productName');
+var precoInput = document.getElementById('productPrice');
+var estoqueInput = document.getElementById('productStock');
+var feedback = document.getElementById('formFeedback');
+var buscaInput = document.getElementById('searchInput');
 
-let produtos = [];
+var produtos = [];
 
 function formatCurrencyBRL(v) {
   return Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -16,113 +16,118 @@ function formatCurrencyBRL(v) {
 
 function renderProdutos(lista) {
   produtosTbody.innerHTML = '';
-  lista.forEach((p) => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${p.nome}</td>
-      <td>${formatCurrencyBRL(p.preco)}</td>
-      <td>${p.estoque}</td>
-      <td class="table-actions">
-        <button class="btn btn-outline" data-acao="edit" data-id="${p.id}">Editar</button>
-        <button class="btn btn-danger" data-acao="del" data-id="${p.id}">Excluir</button>
-      </td>
-    `;
+  lista.forEach(function (p) {
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td>' + p.nome + '</td>' +
+      '<td>' + formatCurrencyBRL(p.preco) + '</td>' +
+      '<td>' + p.estoque + '</td>' +
+      '<td class="table-actions">' +
+      '<button class="btn btn-outline" data-acao="edit" data-id="' + p.id + '">Editar</button>' +
+      '<button class="btn btn-danger" data-acao="del" data-id="' + p.id + '">Excluir</button>' +
+      '</td>';
     produtosTbody.appendChild(tr);
   });
 }
 
-async function carregarProdutos() {
-  try {
-    const resp = await fetch(`${API_BASE}/api/products`);
-    if (!resp.ok) throw new Error(`Erro ao carregar produtos: ${resp.status}`);
-    const data = await resp.json();
-    produtos = data;
-    renderProdutos(produtos);
-  } catch (err) {
-    feedback.textContent = 'Falha ao carregar produtos. Verifique o servidor.';
-  }
+function carregarProdutos() {
+  return fetch(API_BASE + '/api/products')
+    .then(function (resp) {
+      if (!resp.ok) throw new Error('Erro ao carregar produtos: ' + resp.status);
+      return resp.json();
+    })
+    .then(function (data) {
+      produtos = data;
+      renderProdutos(produtos);
+    })
+    .catch(function () {
+      feedback.textContent = 'Falha ao carregar produtos. Verifique o servidor.';
+    });
 }
 
-form.addEventListener('submit', async (e) => {
+form.addEventListener('submit', function (e) {
   e.preventDefault();
-  const nome = nomeInput.value.trim();
-  const preco = parseFloat(precoInput.value);
-  const estoque = parseInt(estoqueInput.value, 10);
+  var nome = nomeInput.value.trim();
+  var preco = parseFloat(precoInput.value);
+  var estoque = parseInt(estoqueInput.value, 10);
   if (!nome || isNaN(preco) || isNaN(estoque)) {
     feedback.textContent = 'Preencha todos os campos corretamente.';
     return;
   }
-  try {
-    const resp = await fetch(`${API_BASE}/api/products`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nome, preco, estoque }),
+  fetch(API_BASE + '/api/products', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nome: nome, preco: preco, estoque: estoque }),
+  })
+    .then(function (resp) {
+      if (!resp.ok) throw new Error('Erro ao criar: ' + resp.status);
+      return resp.json();
+    })
+    .then(function (novo) {
+      produtos.push(novo);
+      renderProdutos(produtos);
+      form.reset();
+      feedback.textContent = 'Produto cadastrado com sucesso!';
+    })
+    .catch(function () {
+      feedback.textContent = 'Falha ao cadastrar. Tente novamente.';
     });
-    if (!resp.ok) throw new Error(`Erro ao criar: ${resp.status}`);
-    const novo = await resp.json();
-    produtos.push(novo);
-    renderProdutos(produtos);
-    form.reset();
-    feedback.textContent = 'Produto cadastrado com sucesso!';
-  } catch (err) {
-    feedback.textContent = 'Falha ao cadastrar. Tente novamente.';
-  }
 });
 
-produtosTbody.addEventListener('click', async (e) => {
-  const btn = e.target.closest('button');
+produtosTbody.addEventListener('click', function (e) {
+  var btn = e.target.closest('button');
   if (!btn) return;
-  const id = btn.dataset.id;
-  const acao = btn.dataset.acao;
+  var id = btn.dataset.id;
+  var acao = btn.dataset.acao;
   if (!id) return;
   if (acao === 'del') {
     if (!confirm('Excluir este produto?')) return;
-    try {
-      const resp = await fetch(`${API_BASE}/api/products/${id}`, { method: 'DELETE' });
-      if (!resp.ok) throw new Error('Erro ao excluir');
-      produtos = produtos.filter((p) => String(p.id) !== String(id));
-      renderProdutos(produtos);
-    } catch (err) {
-      alert('Falha ao excluir.');
-    }
+    fetch(API_BASE + '/api/products/' + id, { method: 'DELETE' })
+      .then(function (resp) {
+        if (!resp.ok) throw new Error('Erro ao excluir');
+        produtos = produtos.filter(function (p) { return String(p.id) !== String(id); });
+        renderProdutos(produtos);
+      })
+      .catch(function () { alert('Falha ao excluir.'); });
   }
   if (acao === 'edit') {
-    const produto = produtos.find((p) => String(p.id) === String(id));
+    var produto = produtos.find(function (p) { return String(p.id) === String(id); });
     if (!produto) return;
-    const nome = prompt('Nome do produto:', produto.nome);
+    var nome = prompt('Nome do produto:', produto.nome);
     if (nome === null) return;
-    const precoStr = prompt('Preço (ex: 10.50):', produto.preco);
+    var precoStr = prompt('Preço (ex: 10.50):', produto.preco);
     if (precoStr === null) return;
-    const estoqueStr = prompt('Estoque:', produto.estoque);
+    var estoqueStr = prompt('Estoque:', produto.estoque);
     if (estoqueStr === null) return;
-    const preco = parseFloat(precoStr);
-    const estoque = parseInt(estoqueStr, 10);
+    var preco = parseFloat(precoStr);
+    var estoque = parseInt(estoqueStr, 10);
     if (!nome || isNaN(preco) || isNaN(estoque)) {
       alert('Valores inválidos.');
       return;
     }
-    try {
-      const resp = await fetch(`${API_BASE}/api/products/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: Number(id), nome, preco, estoque }),
-      });
-      if (!resp.ok) throw new Error('Erro ao atualizar');
-      const atualizado = await resp.json();
-      const idx = produtos.findIndex((p) => String(p.id) === String(id));
-      if (idx >= 0) produtos[idx] = atualizado;
-      renderProdutos(produtos);
-    } catch (err) {
-      alert('Falha ao atualizar.');
-    }
+    fetch(API_BASE + '/api/products/' + id, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: Number(id), nome: nome, preco: preco, estoque: estoque }),
+    })
+      .then(function (resp) {
+        if (!resp.ok) throw new Error('Erro ao atualizar');
+        return resp.json();
+      })
+      .then(function (atualizado) {
+        var idx = produtos.findIndex(function (p) { return String(p.id) === String(id); });
+        if (idx >= 0) produtos[idx] = atualizado;
+        renderProdutos(produtos);
+      })
+      .catch(function () { alert('Falha ao atualizar.'); });
   }
 });
 
-buscaInput.addEventListener('input', () => {
-  const q = buscaInput.value.trim().toLowerCase();
-  const filtrados = produtos.filter(
-    (p) => p.nome.toLowerCase().includes(q) || String(p.preco).includes(q)
-  );
+buscaInput.addEventListener('input', function () {
+  var q = buscaInput.value.trim().toLowerCase();
+  var filtrados = produtos.filter(function (p) {
+    return p.nome.toLowerCase().indexOf(q) >= 0 || String(p.preco).indexOf(q) >= 0;
+  });
   renderProdutos(filtrados);
 });
 
