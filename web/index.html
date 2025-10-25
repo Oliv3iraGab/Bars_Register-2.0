@@ -26,18 +26,52 @@
     <div class="grid-2">
       <section class="card" aria-labelledby="titulo-vendas-totais">
         <h2 id="titulo-vendas-totais" class="section-title">Vendas Totais</h2>
+        <div id="loading-vendas" class="loading-indicator" style="display: none;">
+          <span>Carregando...</span>
+        </div>
         <p id="vendasTotais"><strong>R$ 0,00</strong></p>
-        <p class="form-help">Atualiza dinamicamente com base em dados mock.</p>
+        <p class="form-help">Atualiza automaticamente a cada 5 minutos.</p>
       </section>
       <section class="card" aria-labelledby="titulo-itens">
-        <h2 id="titulo-itens" class="section-title">Produtos Vendidos</h2>
+        <h2 id="titulo-itens" class="section-title">Itens Vendidos</h2>
+        <div id="loading-itens" class="loading-indicator" style="display: none;">
+          <span>Carregando...</span>
+        </div>
         <p id="itensVendidos"><strong>0</strong></p>
       </section>
     </div>
 
+    <section class="card" style="margin-top: 16px" aria-labelledby="titulo-produtos">
+      <h2 id="titulo-produtos" class="section-title">Produtos Mais Vendidos</h2>
+      <div id="loading-produtos" class="loading-indicator" style="display: none;">
+        <span>Carregando produtos...</span>
+      </div>
+      <div class="table-container">
+        <table class="table" id="tabelaProdutos">
+          <thead>
+            <tr>
+              <th>Produto</th>
+              <th>Quantidade</th>
+              <th>Valor Total</th>
+            </tr>
+          </thead>
+          <tbody id="produtosBody">
+            <tr>
+              <td colspan="3" class="text-center">Nenhum produto vendido ainda</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
     <section class="card" style="margin-top: 16px" aria-labelledby="titulo-grafico">
-      <h2 id="titulo-grafico" class="section-title">Gráfico de Vendas Mensais</h2>
-      <div id="grafico" class="chart" aria-hidden="true"></div>
+      <h2 id="titulo-grafico" class="section-title">Gráfico de Vendas Semanais</h2>
+      <div id="loading-grafico" class="loading-indicator" style="display: none;">
+        <span>Carregando gráfico...</span>
+      </div>
+      <div id="grafico" class="chart-container" aria-hidden="true">
+        <canvas id="vendasChart" width="400" height="200"></canvas>
+      </div>
     </section>
   </main>
 
@@ -47,7 +81,8 @@
     </div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="assets/js/main.js"></script>
-  <script src="assets/js/dashboard.js"></script>
+  <script src="assets/js/index-dashboard.js"></script>
 </body>
 </html>

@@ -98,6 +98,68 @@ label { display: block; margin-bottom: 6px; font-weight: 600; }
 .table { width: 100%; border-collapse: collapse; }
 .table th, .table td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; }
 .table th { background: #f4f6f8; font-weight: 700; }
+.table-container { overflow-x: auto; }
+.text-center { text-align: center; }
+
+/* Indicadores de carregamento */
+.loading-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.loading-indicator span::after {
+  content: '';
+  animation: loading-dots 1.5s infinite;
+}
+
+@keyframes loading-dots {
+  0%, 20% { content: ''; }
+  40% { content: '.'; }
+  60% { content: '..'; }
+  80%, 100% { content: '...'; }
+}
+
+/* Gráficos */
+/* Container do gráfico precisa ser relativo para posicionar o tooltip */
+.chart-container {
+  position: relative;
+}
+
+/* Tooltip externo do gráfico */
+.chart-tooltip {
+  position: absolute;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  border: 1px solid rgba(13, 110, 253, 0.4);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+  transform: translate(-50%, -120%);
+  white-space: nowrap;
+  z-index: 10;
+}
+.chart-container {
+  height: 300px;
+  margin: 16px 0;
+}
+
+.chart-container canvas {
+  max-width: 100%;
+  height: auto !important;
+}
+
+/* Responsividade para gráficos */
+@media (max-width: 768px) {
+  .chart-container {
+    height: 250px;
+  }
+}
 .table-actions { display: flex; gap: 8px; }
 
 /* Cards e elementos específicos */

@@ -57,6 +57,7 @@ public class AppMain {
         server.createContext("/api/products", new ProductsApiHandler(produtoService));
         server.createContext("/api/vendas", new VendasApiHandler(vendaService, produtoService, vendaRepo));
         server.createContext("/api/dashboard", new DashboardApiHandler(relatorioService, vendaRepo));
+        server.createContext("/api/dashboard/produtos-vendidos", new ProdutosVendidosApiHandler(vendaRepo, produtoRepo));
 
         // Servidor de arquivos estáticos
         server.createContext("/", new StaticFileHandler(webRoot));
@@ -454,6 +455,154 @@ public class AppMain {
             ex.getResponseHeaders().set("Content-Type", "application/json; charset=utf-8");
             ex.sendResponseHeaders(status, data.length);
             try (OutputStream os = ex.getResponseBody()) { os.write(data); }
+        }
+    }
+
+    static class ProdutosVendidosApiHandler implements HttpHandler {
+        private final VendaRepository vendaRepository;
+        private final ProdutoRepository produtoRepository;
+        
+        ProdutosVendidosApiHandler(VendaRepository vendaRepository, ProdutoRepository produtoRepository) {
+            this.vendaRepository = vendaRepository;
+            this.produtoRepository = produtoRepository;
+        }
+        
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            try {
+                if (!"GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+                    sendJson(exchange, 405, "{\"error\":\"Método não suportado\"}");
+                    return;
+                }
+                
+                // Parâmetros de consulta
+                String q = exchange.getRequestURI().getQuery();
+                int limit = 10;
+                String period = "week"; // day|week|month|all
+                
+                if (q != null && !q.isBlank()) {
+                    for (String part : q.split("&")) {
+                        String[] kv = part.split("=");
+                        if (kv.length == 2) {
+                            String key = kv[0]; 
+                            String val = kv[1];
+                            if ("limit".equals(key)) { 
+                                try { 
+                                    limit = Math.max(1, Math.min(50, Integer.parseInt(val))); 
+                                } catch (Exception ignored) {} 
+                            }
+                            else if ("period".equals(key)) { 
+                                if (val.equalsIgnoreCase("day") || val.equalsIgnoreCase("week") || 
+                                    val.equalsIgnoreCase("month") || val.equalsIgnoreCase("all")) {
+                                    period = val.toLowerCase(); 
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // Definir período de consulta
+                java.time.LocalDateTime fim = java.time.LocalDateTime.now();
+                java.time.LocalDateTime inicio;
+                java.time.LocalDate hoje = java.time.LocalDate.now();
+                
+                switch (period) {
+                    case "day":
+                        inicio = hoje.atStartOfDay();
+                        break;
+                    case "month":
+                        inicio = hoje.withDayOfMonth(1).atStartOfDay();
+                        break;
+                    case "all":
+                        inicio = java.time.LocalDateTime.of(2020, 1, 1, 0, 0);
+                        break;
+                    default: // week
+                        inicio = hoje.minusDays(6).atStartOfDay();
+                        break;
+                }
+                
+                // Buscar vendas do período
+                var vendasPeriodo = vendaRepository.findByPeriodo(inicio, fim);
+                
+                // Agrupar por produto e calcular totais
+                java.util.Map<Integer, ProdutoVendido> produtosVendidos = new java.util.HashMap<>();
+                
+                for (Venda venda : vendasPeriodo) {
+                    for (ItemVenda item : venda.getItens()) {
+                        Produto produto = item.getProduto();
+                        int produtoId = produto.getId();
+                        ProdutoVendido pv = produtosVendidos.get(produtoId);
+                        if (pv == null) {
+                            pv = new ProdutoVendido(produtoId, produto.getNome(), produto.getPreco());
+                            produtosVendidos.put(produtoId, pv);
+                        }
+                        pv.adicionarVenda(item.getQuantidade(), produto.getPreco());
+                    }
+                }
+                
+                // Ordenar por quantidade vendida (decrescente)
+                var produtosOrdenados = produtosVendidos.values().stream()
+                    .sorted((a, b) -> Integer.compare(b.quantidadeTotal, a.quantidadeTotal))
+                    .limit(limit)
+                    .collect(java.util.stream.Collectors.toList());
+                
+                // Construir JSON de resposta
+                StringBuilder sb = new StringBuilder();
+                sb.append("{\"produtos\":[");
+                
+                for (int i = 0; i < produtosOrdenados.size(); i++) {
+                    ProdutoVendido pv = produtosOrdenados.get(i);
+                    sb.append("{")
+                      .append("\"id\":").append(pv.id).append(",")
+                      .append("\"nome\":\"").append(escape(pv.nome)).append("\",")
+                      .append("\"precoUnitario\":").append(Double.toString(pv.precoUnitario)).append(",")
+                      .append("\"quantidadeVendida\":").append(pv.quantidadeTotal).append(",")
+                      .append("\"valorTotal\":").append(Double.toString(pv.valorTotal))
+                      .append("}");
+                    if (i < produtosOrdenados.size() - 1) sb.append(",");
+                }
+                
+                sb.append("],\"period\":\"").append(period).append("\",")
+                  .append("\"count\":").append(produtosOrdenados.size()).append("}");
+                
+                sendJson(exchange, 200, sb.toString());
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+                sendJson(exchange, 500, "{\"error\":\"Erro interno\"}");
+            }
+        }
+        
+        private static String escape(String str) {
+            if (str == null) return "";
+            return str.replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r");
+        }
+        
+        private static void sendJson(HttpExchange ex, int status, String json) throws IOException {
+            byte[] data = json.getBytes(StandardCharsets.UTF_8);
+            ex.getResponseHeaders().set("Content-Type", "application/json; charset=utf-8");
+            ex.sendResponseHeaders(status, data.length);
+            try (OutputStream os = ex.getResponseBody()) { os.write(data); }
+        }
+        
+        // Classe auxiliar para agrupar dados de produtos vendidos
+        private static class ProdutoVendido {
+            final int id;
+            final String nome;
+            final double precoUnitario;
+            int quantidadeTotal = 0;
+            double valorTotal = 0.0;
+            
+            ProdutoVendido(int id, String nome, double precoUnitario) {
+                this.id = id;
+                this.nome = nome;
+                this.precoUnitario = precoUnitario;
+            }
+            
+            void adicionarVenda(int quantidade, double precoVenda) {
+                this.quantidadeTotal += quantidade;
+                this.valorTotal += quantidade * precoVenda;
+            }
         }
     }
 }
