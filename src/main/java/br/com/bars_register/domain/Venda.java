@@ -1,14 +1,21 @@
 package br.com.bars_register.domain;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "vendas")
 public class Venda {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private LocalDateTime dataVenda;
     private double total;
     private String tipoPagamento;
+
+    @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<ItemVenda> itens = new ArrayList<>();
 
     public Venda() {}
@@ -36,6 +43,7 @@ public class Venda {
     public void setItens(List<ItemVenda> itens) { this.itens = itens; }
 
     public void adicionarItem(ItemVenda item) {
+        item.setVenda(this);
         this.itens.add(item);
         this.total = calcularTotal();
     }

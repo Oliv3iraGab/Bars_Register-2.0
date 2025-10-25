@@ -30,6 +30,14 @@ public class InMemoryProdutoRepository implements ProdutoRepository {
 
     @Override
     public boolean deleteById(int id) {
+        Produto p = storage.get(id);
+        if (p == null) return false;
+        boolean hasHistory = hasSalesHistory(id);
+        if (hasHistory) {
+            p.setStatus("INATIVO");
+            storage.put(id, p);
+            return true;
+        }
         return storage.remove(id) != null;
     }
 
@@ -40,6 +48,19 @@ public class InMemoryProdutoRepository implements ProdutoRepository {
 
     @Override
     public List<Produto> findAll() {
-        return new ArrayList<>(storage.values());
+        List<Produto> ativos = new ArrayList<>();
+        for (Produto p : storage.values()) {
+            String st = p.getStatus();
+            if (st == null || !"INATIVO".equalsIgnoreCase(st)) {
+                ativos.add(p);
+            }
+        }
+        return ativos;
+    }
+
+    @Override
+    public boolean hasSalesHistory(int id) {
+        // Repositório de memória não possui vinculação a vendas; retornar falso.
+        return false;
     }
 }

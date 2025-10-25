@@ -8,6 +8,7 @@ import br.com.bars_register.application.repositories.VendaRepository;
 import br.com.bars_register.domain.ItemVenda;
 import br.com.bars_register.domain.Produto;
 import br.com.bars_register.domain.Venda;
+import br.com.bars_register.infrastructure.jpa.JpaUtil;
 
 public class VendaService {
     private final VendaRepository vendaRepository;
@@ -23,23 +24,25 @@ public class VendaService {
             throw new IllegalArgumentException("Venda deve possuir ao menos um item");
         }
 
-        Venda venda = new Venda();
-        venda.setDataVenda(LocalDateTime.now());
-        venda.setTipoPagamento(tipoPagamento);
+        return JpaUtil.inTransaction(() -> {
+            Venda venda = new Venda();
+            venda.setDataVenda(LocalDateTime.now());
+            venda.setTipoPagamento(tipoPagamento);
 
-        // Atualiza estoque e compõe itens
-        for (ItemVenda item : itens) {
-            Produto p = produtoRepository.findById(item.getProduto().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado: " + item.getProduto().getId()));
-            if (p.getEstoque() < item.getQuantidade()) {
-                throw new IllegalArgumentException("Estoque insuficiente para o produto: " + p.getNome());
+            // Atualiza estoque e compõe itens
+            for (ItemVenda item : itens) {
+                Produto p = produtoRepository.findById(item.getProduto().getId())
+                    .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado: " + item.getProduto().getId()));
+                if (p.getEstoque() < item.getQuantidade()) {
+                    throw new IllegalArgumentException("Estoque insuficiente para o produto: " + p.getNome());
+                }
+                p.setEstoque(p.getEstoque() - item.getQuantidade());
+                produtoRepository.update(p);
+                venda.adicionarItem(item);
             }
-            p.setEstoque(p.getEstoque() - item.getQuantidade());
-            produtoRepository.update(p);
-            venda.adicionarItem(item);
-        }
 
-        venda.setTotal(venda.calcularTotal());
-        return vendaRepository.save(venda);
+            venda.setTotal(venda.calcularTotal());
+            return vendaRepository.save(venda);
+        });
     }
 }

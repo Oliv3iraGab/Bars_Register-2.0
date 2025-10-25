@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class InMemoryProdutoRepository implements ProdutoRepository {
+
     private final List<Produto> produtos = new ArrayList<>();
     private final AtomicInteger seq = new AtomicInteger(1);
 
@@ -32,7 +33,18 @@ public class InMemoryProdutoRepository implements ProdutoRepository {
 
     @Override
     public synchronized boolean deleteById(int id) {
-        return produtos.removeIf(p -> p.getId() == id);
+        Optional<Produto> opt = findById(id);
+        if (opt.isEmpty()) return false;
+        Produto p = opt.get();
+        // Repositório em memória não rastreia vendas; se necessário, pode ser ajustado
+        // Para consistência com JPA, quando houver histórico deve inativar. Aqui assumimos falso.
+        boolean hasHistory = hasSalesHistory(id);
+        if (hasHistory) {
+            p.setStatus("INATIVO");
+            update(p);
+            return true;
+        }
+        return produtos.removeIf(pr -> pr.getId() == id);
     }
 
     @Override
@@ -42,6 +54,19 @@ public class InMemoryProdutoRepository implements ProdutoRepository {
 
     @Override
     public synchronized List<Produto> findAll() {
-        return new ArrayList<>(produtos);
+        List<Produto> ativos = new ArrayList<>();
+        for (Produto p : produtos) {
+            String st = p.getStatus();
+            if (st == null || !"INATIVO".equalsIgnoreCase(st)) {
+                ativos.add(p);
+            }
+        }
+        return ativos;
+    }
+
+    @Override
+    public synchronized boolean hasSalesHistory(int id) {
+        // Em memória padrão não possui referência de vendas; retornar falso.
+        return false;
     }
 }

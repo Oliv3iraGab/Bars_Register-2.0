@@ -14,9 +14,14 @@ Arquitetura em camadas com foco em domínio e serviços, preparada para futura i
 - `UsuarioService`: criação e autenticação (contrato).
 - `RelatorioService`: agregação de totais por dia.
 
-## Persistência (Futuro)
-- Implementar repositórios concretos (em memória / JPA) para `Produto`, `Venda`, `Usuario`.
-- Opção JPA/Hibernate: adicionar dependências e mapeamentos; configurar fonte de dados.
+## Persistência
+- Tecnologia: JPA/Hibernate 6 com H2 (arquivo `./data/barsdb`) em desenvolvimento.
+- Configuração: `META-INF/persistence.xml` com `transaction-type=RESOURCE_LOCAL` e `hibernate.hbm2ddl.auto=update`.
+- Mapeamento: `Produto`, `Venda`, `ItemVenda`, `Usuario` anotados com `jakarta.persistence`.
+- Padrão de acesso: interfaces `Repository` no módulo `application` com implementações JPA em `infrastructure.repo`.
+- Transações: utilitário `JpaUtil` coordena `EntityManager` thread-local e commits/rollbacks. `VendaService.registrarVenda` executa em transação única para garantir atomicidade (atualização de estoque + persistência da venda e itens).
+- Exceções: falhas de persistência são encapsuladas em `DataPersistenceException` para diagnóstico e tratamento específico.
+- Compatibilidade: `AppMain` instância repositórios JPA sem alterar contratos; funcionalidades e endpoints seguem inalterados.
 
 ## Testes
 - Cobertura atual: `domain` (`ItemVendaTest`, `VendaTest`).

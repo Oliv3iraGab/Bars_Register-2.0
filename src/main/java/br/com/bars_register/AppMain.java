@@ -43,9 +43,10 @@ public class AppMain {
 
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
 
-        // Inicializa serviços com repositórios em memória
-        ProdutoRepository produtoRepo = new InMemoryProdutoRepository();
-        VendaRepository vendaRepo = new InMemoryVendaRepository();
+        // Inicializa JPA e serviços com repositórios JPA
+        br.com.bars_register.infrastructure.jpa.JpaUtil.init();
+        ProdutoRepository produtoRepo = new br.com.bars_register.infrastructure.repo.JpaProdutoRepository();
+        VendaRepository vendaRepo = new br.com.bars_register.infrastructure.repo.JpaVendaRepository();
         ProdutoService produtoService = new ProdutoService(produtoRepo);
         VendaService vendaService = new VendaService(vendaRepo, produtoRepo);
         RelatorioService relatorioService = new RelatorioService(vendaRepo);
@@ -67,6 +68,7 @@ public class AppMain {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.out.println("Encerrando servidor...");
             server.stop(0);
+            br.com.bars_register.infrastructure.jpa.JpaUtil.shutdown();
         }));
 
         System.out.println("Servidor iniciado em http://localhost:" + port + "/ servindo de " + webRoot);
@@ -208,8 +210,16 @@ public class AppMain {
                     return;
                 }
                 if (id != null && "DELETE".equalsIgnoreCase(method)) {
+                    boolean hasHistory = produtoService.possuiHistoricoVendas(id);
                     boolean ok = produtoService.remover(id);
-                    sendJson(exchange, ok ? 200 : 404, "{\"ok\":" + ok + "}");
+                    if (!ok) {
+                        sendJson(exchange, 404, "{\"ok\":false,\"error\":\"Produto não encontrado\"}");
+                        return;
+                    }
+                    String msg = hasHistory ? "Produto marcado como INATIVO devido a vendas existentes" : "Produto removido com sucesso";
+                    String status = hasHistory ? "INATIVO" : "REMOVIDO";
+                    String json = String.format("{\"ok\":true,\"message\":\"%s\",\"status\":\"%s\"}", escape(msg), status);
+                    sendJson(exchange, 200, json);
                     return;
                 }
                 sendJson(exchange, 405, "{\"error\":\"Método não suportado\"}");

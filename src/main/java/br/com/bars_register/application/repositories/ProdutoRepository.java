@@ -11,4 +11,5 @@ public interface ProdutoRepository {
     boolean deleteById(int id);
     Optional<Produto> findById(int id);
     List<Produto> findAll();
+    boolean hasSalesHistory(int id);
 }

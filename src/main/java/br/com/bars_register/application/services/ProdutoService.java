@@ -31,6 +31,10 @@ public class ProdutoService {
         return produtoRepository.deleteById(id);
     }
 
+    public boolean possuiHistoricoVendas(int id) {
+        return produtoRepository.hasSalesHistory(id);
+    }
+
     public Optional<Produto> buscarPorId(int id) {
         return produtoRepository.findById(id);
     }

@@ -1,11 +1,18 @@
 package br.com.bars_register.domain;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "usuarios")
 public class Usuario {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String nome;
     private String tipoUsuario;
     private String email;
     private boolean status;
+    @Column(unique = true)
     private String login;
     private String senha;
 
