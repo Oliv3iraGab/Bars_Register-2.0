@@ -11,8 +11,8 @@
       const res = await fetch("/api/dashboard", { headers: { "Accept": "application/json" } });
       if (!res.ok) throw new Error("Falha ao carregar resumo");
       const data = await res.json();
-      const totalVendas = Number(data.totalVendas || 0);
-      const totalItens = Number(data.itensVendidos || 0);
+      const totalVendas = Number(data.totalPeriodo || 0);
+      const totalItens = (data.dias || []).reduce((acc, d) => acc + (d.count || 0), 0);
       vendasTotaisEl.innerHTML = `<strong>R$ ${totalVendas.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</strong>`;
       itensVendidosEl.innerHTML = `<strong>${totalItens.toLocaleString("pt-BR")}</strong>`;
 

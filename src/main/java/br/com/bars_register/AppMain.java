@@ -248,6 +248,9 @@ public class AppMain {
         private static void sendJson(HttpExchange ex, int status, String json) throws IOException {
             byte[] data = json.getBytes(StandardCharsets.UTF_8);
             ex.getResponseHeaders().set("Content-Type", "application/json; charset=utf-8");
+            ex.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
+            ex.getResponseHeaders().set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+            ex.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Accept");
             ex.sendResponseHeaders(status, data.length);
             try (OutputStream os = ex.getResponseBody()) { os.write(data); }
         }
@@ -355,6 +358,9 @@ public class AppMain {
         private static void sendJson(HttpExchange ex, int status, String json) throws IOException {
             byte[] data = json.getBytes(StandardCharsets.UTF_8);
             ex.getResponseHeaders().set("Content-Type", "application/json; charset=utf-8");
+            ex.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
+            ex.getResponseHeaders().set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+            ex.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Accept");
             ex.sendResponseHeaders(status, data.length);
             try (OutputStream os = ex.getResponseBody()) { os.write(data); }
         }
@@ -371,7 +377,12 @@ public class AppMain {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             try {
-                if (!"GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+                String method = exchange.getRequestMethod();
+                if ("OPTIONS".equalsIgnoreCase(method)) {
+                    sendJson(exchange, 204, "{}");
+                    return;
+                }
+                if (!"GET".equalsIgnoreCase(method)) {
                     sendJson(exchange, 405, "{\"error\":\"Método não suportado\"}");
                     return;
                 }
@@ -463,6 +474,9 @@ public class AppMain {
         private static void sendJson(HttpExchange ex, int status, String json) throws IOException {
             byte[] data = json.getBytes(StandardCharsets.UTF_8);
             ex.getResponseHeaders().set("Content-Type", "application/json; charset=utf-8");
+            ex.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
+            ex.getResponseHeaders().set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+            ex.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Accept");
             ex.sendResponseHeaders(status, data.length);
             try (OutputStream os = ex.getResponseBody()) { os.write(data); }
         }
@@ -480,7 +494,12 @@ public class AppMain {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             try {
-                if (!"GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+                String method = exchange.getRequestMethod();
+                if ("OPTIONS".equalsIgnoreCase(method)) {
+                    sendJson(exchange, 204, "{}");
+                    return;
+                }
+                if (!"GET".equalsIgnoreCase(method)) {
                     sendJson(exchange, 405, "{\"error\":\"Método não suportado\"}");
                     return;
                 }
@@ -591,6 +610,9 @@ public class AppMain {
         private static void sendJson(HttpExchange ex, int status, String json) throws IOException {
             byte[] data = json.getBytes(StandardCharsets.UTF_8);
             ex.getResponseHeaders().set("Content-Type", "application/json; charset=utf-8");
+            ex.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
+            ex.getResponseHeaders().set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+            ex.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Accept");
             ex.sendResponseHeaders(status, data.length);
             try (OutputStream os = ex.getResponseBody()) { os.write(data); }
         }

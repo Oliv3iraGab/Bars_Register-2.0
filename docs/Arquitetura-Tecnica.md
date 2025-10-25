@@ -22,6 +22,11 @@ Arquitetura em camadas com foco em domínio e serviços, preparada para futura i
 - Transações: utilitário `JpaUtil` coordena `EntityManager` thread-local e commits/rollbacks. `VendaService.registrarVenda` executa em transação única para garantir atomicidade (atualização de estoque + persistência da venda e itens).
 - Exceções: falhas de persistência são encapsuladas em `DataPersistenceException` para diagnóstico e tratamento específico.
 - Compatibilidade: `AppMain` instância repositórios JPA sem alterar contratos; funcionalidades e endpoints seguem inalterados.
+- Persistência robusta: `JpaUtil.init()` garante criação do diretório `data` e usa caminho absoluto para o arquivo H2, evitando perdas de dados por variação de diretório de trabalho.
+
+## API & CORS
+- Todos os handlers de API retornam `Content-Type: application/json` e cabeçalhos CORS permissivos (`Access-Control-Allow-*`) para evitar falhas de `fetch` em ambientes com restrições de origem.
+- Endpoints principais: `/api/products`, `/api/vendas`, `/api/dashboard`, `/api/dashboard/produtos-vendidos`.
 
 ## Testes
 - Cobertura atual: `domain` (`ItemVendaTest`, `VendaTest`).
