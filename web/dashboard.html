@@ -17,29 +17,82 @@
           <li><a href="products.html">Produtos</a></li>
           <li><a href="pos.html">Vendas</a></li>
           <li><a href="dashboard.html">Dashboard</a></li>
-          <li><a href="login.html">Entrar</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
   <main id="conteudo" tabindex="-1">
-    <h1>Dashboard</h1>
+    <h1 class="visually-hidden">Início</h1>
     <div class="grid-2">
       <section class="card" aria-labelledby="titulo-vendas">
-        <h2 id="titulo-vendas" class="section-title">Vendas Totais</h2>
-        <p id="vendasTotais"><strong>R$ 0,00</strong></p>
-        <p class="form-help">Atualiza dinamicamente com base em dados mock.</p>
+        <h2 id="titulo-vendas" class="section-title">Visão Geral de Vendas</h2>
+        <p class="form-help">Acompanhe as vendas e itens vendidos no Dashboard.</p>
       </section>
-      <section class="card" aria-labelledby="titulo-itens">
-        <h2 id="titulo-itens" class="section-title">Produtos Vendidos</h2>
-        <p id="itensVendidos"><strong>0</strong></p>
+
+      <section class="card" aria-labelledby="titulo-destaques">
+        <h2 id="titulo-destaques" class="section-title">Acesso Rápido</h2>
+        <ul>
+          <li><a href="products.html" class="btn btn-outline">Gerenciar Produtos</a></li>
+          <li><a href="pos.html" class="btn btn-outline">Registrar Vendas</a></li>
+          <li><a href="dashboard.html" class="btn btn-outline">Ver Dashboard</a></li>
+        </ul>
       </section>
     </div>
 
-    <section class="card" style="margin-top: 16px" aria-labelledby="titulo-grafico">
-      <h2 id="titulo-grafico" class="section-title">Gráfico de Vendas Mensais</h2>
-      <div id="grafico" class="chart" aria-hidden="true"></div>
+    <section class="card" style="margin-top: 16px" aria-labelledby="titulo-recentes">
+      <div class="section-title" id="titulo-recentes">Vendas Recentes</div>
+      <div class="grid-3" style="align-items: center; gap: 12px; margin-bottom: 12px;">
+        <div>
+          <label for="filtroPeriodo">Período</label>
+          <select id="filtroPeriodo" class="input" aria-label="Filtro de período">
+            <option value="day">Dia</option>
+            <option value="week" selected>Semana</option>
+            <option value="month">Mês</option>
+          </select>
+        </div>
+        <div>
+          <label for="ordenarPor">Ordenar por</label>
+          <select id="ordenarPor" class="input" aria-label="Ordenação">
+            <option value="date" selected>Data</option>
+            <option value="total">Valor</option>
+          </select>
+        </div>
+        <div>
+          <label for="ordem">Ordem</label>
+          <select id="ordem" class="input" aria-label="Ordem">
+            <option value="desc" selected>Desc</option>
+            <option value="asc">Asc</option>
+          </select>
+        </div>
+      </div>
+      <div id="recentSales" class="grid-2" aria-live="polite" aria-busy="false"></div>
+      <div class="form-help" id="recentSalesFeedback"></div>
+    </section>
+
+    <section class="card" style="margin-top: 16px" aria-labelledby="titulo-semana">
+      <div class="section-title" id="titulo-semana">Visão da Semana</div>
+      <div class="grid-2">
+        <div>
+          <div class="chart" id="weeklyChart" aria-label="Gráfico semanal"></div>
+        </div>
+        <div>
+          <div class="grid-1">
+            <div class="card" style="box-shadow: var(--shadow);">
+              <div id="metricTotal" class="center"><strong>Total da Semana</strong><br><span>R$ 0,00</span></div>
+            </div>
+            <div class="card" style="box-shadow: var(--shadow);">
+              <div id="metricTicket" class="center"><strong>Ticket Médio</strong><br><span>R$ 0,00</span></div>
+            </div>
+            <div class="card" style="box-shadow: var(--shadow);">
+              <div id="metricComparacao" class="center"><strong>Comparação</strong><br><span><span id="trendArrow">→</span> <span id="trendValue">0%</span></span></div>
+            </div>
+            <div class="card" style="box-shadow: var(--shadow);">
+              <div id="metricDiaCheio" class="center"><strong>Dia de maior movimento</strong><br><span id="busyDay">-</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 
@@ -50,6 +103,6 @@
   </footer>
 
   <script src="assets/js/main.js"></script>
-  <script src="assets/js/dashboard.js"></script>
+  <script src="assets/js/index.js"></script>
 </body>
 </html>

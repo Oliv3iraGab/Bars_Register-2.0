@@ -17,44 +17,28 @@
           <li><a href="products.html">Produtos</a></li>
           <li><a href="pos.html">Vendas</a></li>
           <li><a href="dashboard.html">Dashboard</a></li>
-          <li><a href="login.html">Entrar</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
   <main id="conteudo" tabindex="-1">
-    <h1 class="visually-hidden">Início</h1>
+    <h1>Dashboard</h1>
     <div class="grid-2">
-      <section class="card" aria-labelledby="titulo-vendas">
-        <h2 id="titulo-vendas" class="section-title">Visão Geral de Vendas</h2>
-        <div class="chart" aria-hidden="true">
-          <div class="bar" style="height: 120px"></div>
-          <div class="bar" style="height: 160px"></div>
-          <div class="bar" style="height: 90px"></div>
-          <div class="bar" style="height: 200px"></div>
-          <div class="bar" style="height: 140px"></div>
-        </div>
-        <p class="form-help">Gráfico ilustrativo baseado nos wireframes.</p>
+      <section class="card" aria-labelledby="titulo-vendas-totais">
+        <h2 id="titulo-vendas-totais" class="section-title">Vendas Totais</h2>
+        <p id="vendasTotais"><strong>R$ 0,00</strong></p>
+        <p class="form-help">Atualiza dinamicamente com base em dados mock.</p>
       </section>
-
-      <section class="card" aria-labelledby="titulo-destaques">
-        <h2 id="titulo-destaques" class="section-title">Produtos em Destaque</h2>
-        <ul>
-          <li>Produto A</li>
-          <li>Produto B</li>
-          <li>Produto C</li>
-        </ul>
+      <section class="card" aria-labelledby="titulo-itens">
+        <h2 id="titulo-itens" class="section-title">Produtos Vendidos</h2>
+        <p id="itensVendidos"><strong>0</strong></p>
       </section>
     </div>
 
-    <section class="card" style="margin-top: 16px" aria-labelledby="titulo-atividade">
-      <h2 id="titulo-atividade" class="section-title">Atividade Recente</h2>
-      <ul>
-        <li>Venda #1023 concluída</li>
-        <li>Produto B atualizado</li>
-        <li>Novo usuário registrado</li>
-      </ul>
+    <section class="card" style="margin-top: 16px" aria-labelledby="titulo-grafico">
+      <h2 id="titulo-grafico" class="section-title">Gráfico de Vendas Mensais</h2>
+      <div id="grafico" class="chart" aria-hidden="true"></div>
     </section>
   </main>
 
@@ -65,5 +49,6 @@
   </footer>
 
   <script src="assets/js/main.js"></script>
+  <script src="assets/js/dashboard.js"></script>
 </body>
 </html>

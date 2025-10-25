@@ -17,7 +17,7 @@
           <li><a href="products.html">Produtos</a></li>
           <li><a href="pos.html">Vendas</a></li>
           <li><a href="dashboard.html">Dashboard</a></li>
-          <li><a href="login.html">Entrar</a></li>
+          <!-- link de login removido -->
         </ul>
       </nav>
     </div>
@@ -30,11 +30,16 @@
         <h2 id="titulo-add-item" class="section-title">Adicionar Item</h2>
         <div class="form-field">
           <label for="nomeItem">Produto</label>
-          <input id="nomeItem" class="input" placeholder="Nome do produto" />
+          <div class="combo" role="combobox" aria-haspopup="listbox" aria-owns="listaSugestoes" aria-expanded="false">
+            <input id="nomeItem" class="input combo-input" placeholder="Digite para pesquisar produto" aria-autocomplete="list" aria-controls="listaSugestoes" />
+            <span class="combo-caret" aria-hidden="true"></span>
+            <ul id="listaSugestoes" class="combo-list" role="listbox" aria-label="Sugestões de produtos" hidden></ul>
+          </div>
         </div>
         <div class="form-field">
-          <label for="precoItem">Preço (R$)</label>
-          <input id="precoItem" type="number" step="0.01" class="input" placeholder="0.00" />
+          <label for="precoItem">Valor unitário (R$)</label>
+          <input id="precoItem" class="input" type="number" step="0.01" placeholder="Preço unitário" readonly aria-readonly="true" aria-label="Valor unitário do produto selecionado" />
+          <p class="form-help">Preenchido automaticamente ao selecionar um produto.</p>
         </div>
         <div class="form-field">
           <label for="qtdItem">Quantidade</label>
@@ -81,5 +86,40 @@
 
   <script src="assets/js/main.js"></script>
   <script src="assets/js/pos.js"></script>
+    <script>
+      (function(){
+        const combo = document.querySelector('.combo');
+        const input = document.getElementById('nomeItem');
+        const list = document.getElementById('listaSugestoes');
+        if (!combo || !input || !list) return;
+        const setExpanded = () => {
+          const expanded = !list.hasAttribute('hidden') && list.children.length > 0;
+          combo.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+        };
+        const ensureOptionsAria = () => {
+          Array.from(list.children).forEach((li, idx) => {
+            if (li.tagName !== 'LI') return;
+            if (!li.id) li.id = `opt-${idx}`;
+            li.setAttribute('role','option');
+            li.setAttribute('tabindex','-1');
+          });
+        };
+        const mo = new MutationObserver(() => { ensureOptionsAria(); setExpanded(); });
+        mo.observe(list, { childList: true, attributes: true, subtree: false });
+        input.addEventListener('focus', () => setExpanded());
+        input.addEventListener('blur', () => setTimeout(setExpanded, 120));
+        document.addEventListener('click', (e) => {
+          if (!combo.contains(e.target)) {
+            list.setAttribute('hidden','');
+            setExpanded();
+          }
+        });
+        list.addEventListener('mouseover', (e) => {
+          const li = e.target.closest('li');
+          if (!li) return;
+          input.setAttribute('aria-activedescendant', li.id);
+        });
+      })();
+    </script>
 </body>
 </html>

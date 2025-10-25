@@ -1,28 +1,48 @@
 # Bars Register Refatorado
 
-Separação de camadas e aplicação de SOLID sobre o projeto base "Bar's Register".
+Projeto com separação de camadas e princípios SOLID aplicado ao domínio de vendas para bares.
 
 ## Arquitetura
 - `domain`: entidades de negócio (`Usuario`, `Produto`, `Venda`, `ItemVenda`).
-- `application`: interfaces de repositório e serviços de negócio.
-- `infrastructure`: implementações de infraestrutura (ex.: repositórios em memória para testes).
-- `ui`: reservado para futura integração com Swing; aqui a UI deve apenas orquestrar serviços.
+- `application`: serviços e interfaces de repositório (`ProdutoService`, `UsuarioService`, `VendaService`, `RelatorioService`).
+- `web`: UI estática (HTML/CSS/JS) para navegação, PDV, dashboard e gestão de produtos.
+- `docs`: documentação de usuário, técnica e instruções de instalação.
 
-## Como executar os testes no `main()`
-1. Instale Java 17+ e Maven.
-2. No diretório `Bars-Register-Refatorado`, execute:
-   - `mvn -q package`
-   - `mvn -q exec:java -Dexec.mainClass=br.com.bars_register.AppMain`
+## Requisitos
+- Java 17+
+- Maven 3.9+
+- Navegador moderno (Chrome, Edge, Firefox ou Safari)
 
-Os testes no `main` cobrem:
-- Autenticação de usuário.
-- Cadastro, listagem e remoção de produtos.
-- Registro de venda e atualização de estoque.
-- Relatório de total por dia.
+## Como construir e testar
+```sh
+mvn -q clean package
+mvn -q test
+```
+- Testes cobrem lógica de cálculo de `ItemVenda` e `Venda`.
+- Serviços estão prontos para integração com repositórios (infraestrutura futura).
 
-## Próxima etapa
-- Integrar a UI Swing existente para usar os serviços (`ProdutoService`, `UsuarioService`, `VendaService`).
-- Adicionar implementação JPA dos repositórios e configurar `persistence.xml`.
+## Como executar a UI (frontend)
+A UI é estática e pode ser aberta diretamente:
+- Abra `web/index.html` no navegador.
+- Navegação disponível: `Início`, `Produtos`, `Vendas (POS)`, `Dashboard`, `Entrar`.
 
-## Referência
-- Projeto base: https://github.com/Oliv3iraGab/Bars-Register
+Opcional (servidor estático):
+- Com Node instalado: `npx serve web` e acesse `http://localhost:3000`.
+
+## Funcionalidades
+- Produtos: busca, adição (mock), tabela com ações.
+- PDV: adicionar/remover itens, ajustar quantidade, finalizar/cancelar venda (mock), cálculo de total.
+- Dashboard: totais e gráfico de vendas (mock).
+- Acessibilidade: skip-link, foco visível, ARIA em navegação e seções.
+- Responsividade: grids e layout ajustável (breakpoint 900px).
+
+## Próximas etapas
+- Implementar repositórios concretos (ex.: em memória/JPA) e conexão com serviços.
+- Integrar backend (REST ou Swing) para persistência real.
+- Expandir cobertura de testes para serviços (`ProdutoService`, `VendaService`, `RelatorioService`, `UsuarioService`).
+
+## Documentação
+Consulte `docs/` para:
+- Manual do Usuário
+- Instalação e Configuração
+- Arquitetura Técnica

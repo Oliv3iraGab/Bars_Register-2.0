@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Teste POS – Combo-box</title>
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+  <style>
+    .result-ok { color: #198754; }
+    .result-fail { color: #dc3545; }
+    .results { margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <main class="container-narrow">
+    <h1>Testes de Listagem e Seleção do Combo-box</h1>
+
+    <section class="card" aria-labelledby="titulo-add-item">
+      <h2 id="titulo-add-item" class="section-title">Adicionar Item</h2>
+      <div class="form-field">
+        <label for="nomeItem">Produto</label>
+        <div class="combo" role="combobox" aria-haspopup="listbox" aria-owns="listaSugestoes" aria-expanded="false">
+          <input id="nomeItem" class="input combo-input" placeholder="Digite para pesquisar produto" aria-autocomplete="list" aria-controls="listaSugestoes" />
+          <span class="combo-caret" aria-hidden="true"></span>
+          <ul id="listaSugestoes" class="combo-list" role="listbox" aria-label="Sugestões de produtos" hidden></ul>
+        </div>
+      </div>
+      <div class="form-field">
+        <label for="precoItem">Valor unitário (R$)</label>
+        <input id="precoItem" class="input" type="number" step="0.01" placeholder="Preço unitário" readonly aria-readonly="true" aria-label="Valor unitário do produto selecionado" />
+      </div>
+      <div class="form-field">
+        <label for="qtdItem">Quantidade</label>
+        <input id="qtdItem" type="number" min="1" class="input" value="1" />
+      </div>
+      <button id="btnAdd" class="btn btn-primary">Adicionar</button>
+    </section>
+
+    <section class="card" aria-labelledby="titulo-acoes">
+      <h2 id="titulo-acoes" class="section-title">Ações</h2>
+      <button id="btnFinalizar" class="btn btn-success">Finalizar Venda</button>
+      <button id="btnCancelar" class="btn btn-danger">Cancelar Venda</button>
+      <p id="acaoFeedback" class="form-help" aria-live="polite" style="margin-top: 12px"></p>
+    </section>
+
+    <section class="card" style="margin-top: 16px" aria-labelledby="titulo-itens">
+      <h2 id="titulo-itens" class="section-title">Itens da Venda</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>Preço</th>
+            <th>Qtd</th>
+            <th>Subtotal</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="carrinhoBody"></tbody>
+      </table>
+    </section>
+
+    <section class="card" style="margin-top: 16px" aria-labelledby="titulo-total">
+      <h2 id="titulo-total" class="section-title">Total</h2>
+      <p id="total" aria-live="polite"><strong>R$ 0,00</strong></p>
+    </section>
+
+    <div class="card results" id="results"></div>
+  </main>
+
+  <script>
+    // Mock de fetch para produtos
+    const produtosMock = [
+      { id: 1, nome: "Produto Teste A", preco: 12.5, estoque: 10 },
+      { id: 2, nome: "Produto Teste B", preco: 8.9, estoque: 5 },
+      { id: 3, nome: "Outra Coisa", preco: 20, estoque: 2 },
+    ];
+    const originalFetch = window.fetch;
+    window.fetch = async function(url, opts) {
+      if (String(url).includes('/api/products')) {
+        return new Response(JSON.stringify(produtosMock), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+      return originalFetch.apply(this, arguments);
+    };
+  </script>
+  <script src="../assets/js/pos.js"></script>
+  <script>
+    (function(){
+      const resultsEl = document.getElementById('results');
+      function log(ok, msg) {
+        const p = document.createElement('p');
+        p.className = ok ? 'result-ok' : 'result-fail';
+        p.textContent = (ok ? '✔ ' : '✖ ') + msg;
+        resultsEl.appendChild(p);
+      }
+      function wait(ms){ return new Promise(r => setTimeout(r, ms)); }
+      async function run(){
+        const input = document.getElementById('nomeItem');
+        const list = document.getElementById('listaSugestoes');
+        const preco = document.getElementById('precoItem');
+        // Aguarda carregamento de produtos e render inicial
+        await wait(150);
+        // Digitar para filtrar
+        input.value = 'Produto';
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        await wait(50);
+        const hasItems = list.children.length > 0;
+        const visible = !list.hasAttribute('hidden');
+        log(hasItems, 'Renderizou sugestões após digitação');
+        log(visible, 'Dropdown visível quando há itens');
+        // Selecionar primeiro item
+        const first = list.querySelector('li');
+        if (first) {
+          first.click();
+          await wait(20);
+          const selectedOk = input.value === 'Produto Teste A' && Number(preco.value) === Number(produtosMock[0].preco);
+          log(selectedOk, 'Selecionou item e preencheu preço');
+          const closed = list.hasAttribute('hidden');
+          log(closed, 'Dropdown fechado após seleção');
+        } else {
+          log(false, 'Não há item para selecionar');
+        }
+      }
+      run();
+    })();
+  </script>
+</body>
+</html>
